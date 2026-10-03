@@ -24,6 +24,23 @@ pkgs/<name>/package.nix
 `nix fmt` formats everything.  `nix develop` provides `nix-update`
 for bumping versions (`nix-update --flake <name>`).
 
+## Building and CI
+
+There is no binary cache: consumers build each package from source the
+first time they use it, and Nix keeps the result in their store after
+that.  Everything here is small enough for that to be fine; if a
+package ever gets slow to build, that's the time to add a cache.
+
+CI (`.github/workflows/ci.yml`) runs `nix flake check` on
+x86_64-linux, aarch64-linux and aarch64-darwin for every push to
+`master` and every pull request, building every package natively on
+each, and fails if `nix fmt` would change anything.
+
+Locally, `nix flake check` builds only for your own system.  Adding
+`--all-systems` fails on packages for other platforms, since they
+can't be built here; `nix flake check --all-systems --no-build`
+evaluates them without building, and CI covers the rest.
+
 ## Using from another project
 
 ```nix
