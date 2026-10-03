@@ -32,6 +32,7 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@v3
       # Builds every package for this runner's system; the other
       # systems are only evaluated, which their own jobs cover.
-      - run: nix flake check -L
+      # --keep-going so one failure doesn't cancel the other builds.
+      - run: nix flake check -L --keep-going
       - if: matrix.system == 'x86_64-linux'
         run: nix fmt -- --ci
