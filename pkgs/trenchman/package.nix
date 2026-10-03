@@ -27,6 +27,10 @@ buildGoModule (finalAttrs: {
     "-X main.version=${finalAttrs.version}"
   ];
 
+  # Racy: it reads from an empty bytes.Buffer before a goroutine writes
+  # to it, and gets EOF if the read wins (~0.25% of runs).
+  checkFlags = [ "-skip=^TestReadLine$" ];
+
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
 
